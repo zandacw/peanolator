@@ -1,19 +1,16 @@
-OCAMLC=ocamlc
-OCAMLDEP=ocamldep
-OCAMLFLAGS=
+OCAMLC = ocamlc
+OCAMLFLAGS = -w +A-4-9-27
+SOURCES = peano.ml parser.ml main.ml 
+OBJECTS = $(SOURCES:.ml=.cmo)
+EXECUTABLE = main
 
-MODULE_NAME=main
-SOURCE_FILE=main.ml
+all: $(EXECUTABLE)
 
-.PHONY: all clean
+$(EXECUTABLE): $(OBJECTS)
+	$(OCAMLC) $(OCAMLFLAGS) -o $@ $(OBJECTS)
 
-all: $(MODULE_NAME) utop
-
-$(MODULE_NAME): $(SOURCE_FILE)
-	$(OCAMLC) $(OCAMLFLAGS) -o $@ $<
-
-utop: $(MODULE_NAME)
-	utop -I . -init $(MODULE_NAME).cmo
+%.cmo: %.ml
+	$(OCAMLC) $(OCAMLFLAGS) -c $<
 
 clean:
-	rm -f $(MODULE_NAME) $(MODULE_NAME).cmi $(MODULE_NAME).cmo
+	rm -f $(EXECUTABLE) $(OBJECTS) $(SOURCES:.ml=.cmi)

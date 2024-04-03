@@ -1,32 +1,27 @@
-type p = Z | S of p
+open Parser
+open Peano
 
-let suc (x:p) = S x
 
-let dec (x:p) = 
-    match x with
-    | Z -> Z
-    | S i -> i
+let rec eval (ast:Parser.ast) : Peano.p =
+    let open Parser in
+    let open Peano in
+    match ast with 
+    | Const i -> Peano.n i
+    | Add (x,y) -> eval x + eval y
+    | Sub (x,y) -> eval x - eval y
+    | Mod (x,y) -> (eval x) % (eval y)
+    | Mul (x,y) -> eval x * eval y
+    | Div (x,y) -> eval x / eval y
+    | Exp (x,y) -> eval x ^ eval y
 
-let rec num n = 
-    if n <= 0 
-    then Z 
-    else num (n-1) |> suc 
+let rec loop () =
+    print_string "peano> ";
+    let input = read_line () in
+    let ast = input |> Parser.init |> Parser.parse_expr.run in
+    let _ = match ast with 
+        | Ok (ast, _) -> eval ast |> Peano.show |> Printf.printf "= %d\n"
+        | Error e -> Printf.printf "Error: %s @ %d" e.desc e.pos;
+    in
+    loop ()
 
-let rec ( + ) (x:p) (y:p) : p = 
-    match y with
-    | Z -> x
-    | S y -> ( + ) (suc x)  y
-
-let rec ( * ) (x:p) (y:p) : p =
-    match y with
-    | Z -> Z
-    | S y -> ( * ) x y |> ( + ) x 
-
-let rec ( - ) (x:p) (y:p) : p = 
-    match y with
-    | Z -> x
-    | S y -> ( - ) (dec x) y
-
-let rec ( / ) (x:p) (y:p) : p =
-    if x - (dec y) = Z then Z 
-    else suc (( / ) (( - ) x y) y)
+let () = loop ()

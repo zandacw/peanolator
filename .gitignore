@@ -1,0 +1,13 @@
+# OCaml build artifacts
+*.cmo
+*.cmx
+*.cmi
+*.cmt
+*.cmti
+*.annot
+*.byte
+*.native
+*.o
+*.a
+*.obj
+*.exe
