@@ -26,7 +26,7 @@ git clone git@github.com:zandacw/peanolator.git
 ```
 - Navigate into the project directory:
 ```bash
-cd peanolato
+cd peanolator
 ``` 
 
 - Build the REPL and link the expression parser and Peano arithmetic libraries:
