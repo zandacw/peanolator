@@ -1,4 +1,4 @@
-# Peano Arithmetic and Arithmetic Expression Parser in OCaml
+# Peano Calculator and Arithmetic Expression Parser in OCaml
 
 ## Introduction
 
