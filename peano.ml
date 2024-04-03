@@ -19,7 +19,7 @@ let n (x:int) : p =
     in
     aux Z x
 
-let show (n:p) : int =
+let to_int (n:p) : int =
     let rec aux acc = function
         | Z -> acc
         | S n -> aux (acc + 1) n
