@@ -6,7 +6,15 @@ This project is a dive into the world of Peano arithmetic and monadic parser com
 
 ## Peano Arithmetic Library
 
-The Peano arithmetic library included in this project performs arithmetic operations using Peano numbers instead of the built-in arithmetic operations in OCaml. Peano numbers are a way to represent natural numbers using only a successor function and zero, without relying on the standard numerical operators.
+The Peano arithmetic library included in this project performs arithmetic operations using Peano numbers instead of the built-in arithmetic operations in OCaml. Peano numbers are a way to represent natural numbers using only a successor function and zero, without relying on the standard numerical operators. While Peano arithmetic is conceptually elegant and educational, it also implies the use of recursion for arithmetic operations. As a result, performing large calculations can take an exceptionally long time. For example to compute the expression "1000 + 2000" this program will have to make ~5000 recursive calls: 3000 to build the starting Peano numbers and 2000 to perform the addition.
+
+### Tail Recursion
+
+To mitigate the risk of stack overflow when performing recursive calculations, tail recursion has been employed extensively throughout the project. Tail recursion allows recursive functions to be optimized by the compiler, reducing the risk of running into stack size limitations for large computations.
+
+### Memory Usage
+
+While tail call recursion has been employed to optimize performance and mitigate the risk of stack overflow, it's important to consider memory usage when dealing with large Peano numbers. In this project, each Peano number is represented as a recursive data type, where, for instance, the number 5 is expressed as S(S(S(S(S(Z))))). Consequently, performing calculations involving very large numbers can consume a significant amount of RAM to store the numbers and execute the computations. While the use of tail call optimization allows for theoretically unlimited calculations, users should be mindful of memory constraints when working with exceptionally large numbers.
 
 ## Arithmetic Expression Parser
 
