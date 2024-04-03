@@ -4,6 +4,12 @@
 
 This project is a dive into the world of Peano arithmetic and monadic parser combinators in OCaml. Peano arithmetic is a system of arithmetic based on natural numbers, using only a basic set of axioms. The goal of this project was to implement a Peano arithmetic library and an arithmetic expression parser using OCaml, providing a hands-on learning experience with these concepts.
 
+
+## Screenshot
+
+![Alt Text](screenshot.png)
+
+
 ## Peano Arithmetic Library
 
 The Peano arithmetic library included in this project performs arithmetic operations using Peano numbers instead of the built-in arithmetic operations in OCaml. Peano numbers are a way to represent natural numbers using only a successor function and zero, without relying on the standard numerical operators. While Peano arithmetic is conceptually elegant and educational, it also implies the use of recursion for arithmetic operations. As a result, performing large calculations can take an exceptionally long time. For example to compute the expression "1000 + 2000" this program will have to make ~5000 recursive calls: 3000 to build the starting Peano numbers and 2000 to perform the addition.
