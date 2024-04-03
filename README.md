@@ -34,23 +34,27 @@ The interface for this project is a Read-Eval-Print Loop (REPL), allowing users 
 
 To get started with this project:
 
-- Clone the repo to your local machine:
+1. Clone the repo to your local machine:
 ```bash
 git clone git@github.com:zandacw/peanolator.git
 ```
-- Navigate into the project directory:
+2. Navigate into the project directory:
 ```bash
 cd peanolator
 ``` 
-
-- Build the REPL and link the expression parser and Peano arithmetic libraries:
+3. Build the REPL and link the expression parser and Peano arithmetic libraries:
 ```bash
 make main
 ```
-- Run the REPL:
+4. Run the REPL:
 ```bash
 ./main
 ```
+To enhance the executable with features such as backspacing, corrections, and command history, you can use [rlwrap](https://github.com/hanslub42/rlwrap), a readline wrapper, and use with the executable as follows:
+```bash
+rlwrap ./main
+```
+
 ## Contributing
 
 Contributions to this project are welcome! If you have ideas for improvements or new features, feel free to open an issue or submit a pull request. Let's collaborate to make this project even better!
