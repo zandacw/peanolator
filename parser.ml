@@ -1,10 +1,16 @@
-type op = 
+type t = {
+    pos : int;
+    stream : char list 
+}
+
+type error = {
+    location : int;
+    desc : string
+}
+
+type sign = 
     | Plus
     | Minus
-    | Mul
-    | Div
-
-
 
 type ast =
     Const of int 
@@ -15,18 +21,7 @@ type ast =
     | Mod of ast * ast
     | Exp of ast * ast
 
-
-type input = {
-    pos : int;
-    stream : char list 
-}
-
-type error = {
-    pos : int;
-    desc : string
-}
-
-let init (s:string) : input = {
+let init (s:string) : t = {
     pos = 0;
     stream = s 
         |> String.to_seq 
@@ -38,7 +33,7 @@ let str_of_chars (cs: char list) : string =
     cs |> List.to_seq |> String.of_seq
 
 type 'a parser = {
-    run: input -> (('a * input), error) result
+    run: t -> (('a * t), error) result
 }
 
 let return (a: 'a) : 'b parser = {
@@ -48,11 +43,11 @@ let return (a: 'a) : 'b parser = {
 let ch (c:char) : char parser =  {
     run = fun input -> 
         match input.stream with 
-        | [] -> Error { pos = input.pos; desc = "eof" }
+        | [] -> Error { location = input.pos; desc = "eof" }
         | x :: xs ->  if x = c
             then Ok (c,  { pos = input.pos + 1; stream = xs })
             else Error { 
-                pos = input.pos; 
+                location = input.pos; 
                 desc = Printf.sprintf 
                     "@ %d: got '%c', expected '%c'" 
                     input.pos c x 
@@ -62,12 +57,12 @@ let ch (c:char) : char parser =  {
 let alpha : char parser = {
     run = fun input ->
         match input.stream with
-        | [] -> Error { pos = input.pos; desc = "eof" }
+        | [] -> Error { location = input.pos; desc = "eof" }
         | x :: xs -> match x with
             | 'a'..'z' | 'A'..'Z' -> 
                 Ok (x, { pos = input.pos + 1; stream = xs })
             | _ -> Error {
-                pos = input.pos;
+                location = input.pos;
                 desc = Printf.sprintf
                     "@ %d: got '%c', expected 'alpha'"
                     input.pos x 
@@ -77,11 +72,11 @@ let alpha : char parser = {
 let digit : char parser = {
     run = fun input ->
         match input.stream with
-        | [] -> Error { pos = input.pos; desc = "eof" }
+        | [] -> Error { location = input.pos; desc = "eof" }
         | x :: xs -> match x with
             | '0'..'9' -> Ok (x, { pos = input.pos + 1; stream = xs })
             | _ -> Error {
-                pos = input.pos;
+                location = input.pos;
                 desc = Printf.sprintf
                     "@ %d: got '%c', expected 'digit'"
                     input.pos x 
@@ -137,7 +132,7 @@ let apply = ( <*> )
 
 let fail (msg:string) : 'a parser = { 
     run = fun input -> Error {
-        pos = input.pos; 
+        location = input.pos; 
         desc = "no match"
     } 
 }
@@ -147,7 +142,7 @@ let choice (ps: 'a parser list) : 'a parser =
 
 let many (p: 'a parser) : ('a list parser) = {
     run = fun input ->
-        let rec aux acc input : 'a list * input =
+        let rec aux acc input : 'a list * t =
             match p.run input with
             | Error _ -> List.rev acc, input
             | Ok (r, input) -> aux (r :: acc) input
@@ -159,7 +154,7 @@ let many1 (p: 'a parser) : ('a list parser) = many p >>= fun r -> {
     run = fun input -> 
         if List.is_empty r 
         then Error {
-            pos = input.pos;
+            location = input.pos;
             desc = "expected alteast one match"
         }
         else Ok(r, input)
@@ -213,12 +208,12 @@ let rec ( ^ ) x y =
     else x * ( ^ ) x (y - 1) 
 
 let parse_expr = fix @@ fun parse_expr ->
-    let rec term =
-        let rec factor =
+    let term =
+        let factor =
             (parse_const >>= return) <|>
             (ch '(' *> parse_expr <* ch ')')
         in
-        let rec unary =
+        let unary =
             (ch '+' *> factor) <|>
             (ch '-' *> factor 
                 >>= fun right -> return (Mul(Const (-1), right))
